@@ -1,14 +1,17 @@
-package com.stucom.grupo4.settings;
+package com.stucom.grupo4.settings.activities;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import com.stucom.grupo4.settings.R;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -17,6 +20,7 @@ public class SettingsActivity extends AppCompatActivity {
     private EditText edName;
     private EditText edEmail;
     private ImageView imgUser;
+    private Image imgUserDefault;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
         imgUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+                Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
                 photoPickerIntent.setType("image/*");
                 startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
             }
@@ -56,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        ed.commit();
+        ed.apply();
     }
 
     @Override
@@ -72,7 +76,6 @@ public class SettingsActivity extends AppCompatActivity {
         // Assign data from SharedPreferences to EditTexts if any
         edName.setText(name);
         edEmail.setText(email);
-
         imgUser.setImageURI(Uri.parse(userImage));
     }
 
@@ -90,7 +93,7 @@ public class SettingsActivity extends AppCompatActivity {
         if (!email.equals(""))
             ed.putString("email", email);
 
-        ed.commit();
+        ed.apply();
         super.onPause();
     }
 }

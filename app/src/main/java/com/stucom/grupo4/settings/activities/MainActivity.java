@@ -1,4 +1,4 @@
-package com.stucom.grupo4.settings;
+package com.stucom.grupo4.settings.activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.stucom.grupo4.settings.R;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,14 +67,16 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
 
+        // Check if user is registered
+        String token = prefs.getString("token", "");
+        if (token.equals("")) {
+            // Send to register screen
+            Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+            startActivity(intent);
+        }
+
         String name = prefs.getString("name", getString(R.string.txt_greeting_default));
         String message = getString(R.string.txt_greeting, name);
         txtGreeting.setText(message);
-    }
-
-    @Override
-    protected void onPause() {
-
-        super.onPause();
     }
 }
