@@ -3,24 +3,38 @@ package com.stucom.grupo4.settings.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.stucom.grupo4.settings.APIResponse;
+import com.stucom.grupo4.settings.MyVolley;
 import com.stucom.grupo4.settings.R;
+import com.stucom.grupo4.settings.constants.APIData;
+import com.stucom.grupo4.settings.model.User;
+
+import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SettingsActivity extends AppCompatActivity {
 
     final int GALLERY_REQUEST = 10;
 
+    private boolean uploading = false;
+
     private EditText edName;
-    private EditText edEmail;
     private ImageView imgUser;
-    private Image imgUserDefault;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +43,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Assign EditTexts to their R.id
         edName = findViewById(R.id.edName);
-        edEmail = findViewById(R.id.edEmail);
         imgUser = findViewById(R.id.imgUser);
 
         imgUser.setOnClickListener(new View.OnClickListener() {
@@ -66,34 +79,76 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        uploading = false;
+
         SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+//
+//        // Get data from SharedPreferences
+//        String name = prefs.getString("name", "");
+//        String userImage = prefs.getString("userImage", "");
+//
+//        // Assign data from SharedPreferences to EditTexts if any
+//        edName.setText(name);
+//        imgUser.setImageURI(Uri.parse(userImage));
 
-        // Get data from SharedPreferences
-        String name = prefs.getString("name", "");
-        String email = prefs.getString("email", "");
-        String userImage = prefs.getString("userImage", "");
-
-        // Assign data from SharedPreferences to EditTexts if any
-        edName.setText(name);
-        edEmail.setText(email);
-        imgUser.setImageURI(Uri.parse(userImage));
+        // Get data from server
+        String requestURL = APIData.API_URL + "user" + "?token=" + prefs.getString("token", "");
+        sendRequest(requestURL, Request.Method.GET);
     }
 
     @Override
     protected void onPause() {
+        uploading = true;
+
         SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
-        SharedPreferences.Editor ed = prefs.edit();
 
-        // Store variables in SharedPreferences
-        String name = edName.getText().toString();
-        if (!name.equals(""))
-            ed.putString("name", name);
+        // Store data on server
+        String requestURL = APIData.API_URL + "user" + "?token=" + prefs.getString("token", "");;
+        sendRequest(requestURL, Request.Method.PUT);
 
-        String email = edEmail.getText().toString();
-        if (!email.equals(""))
-            ed.putString("email", email);
-
-        ed.apply();
         super.onPause();
+    }
+
+    void sendRequest(String requestDataURL, int requestMethod) {
+        SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+        final SharedPreferences.Editor ed = prefs.edit();
+
+        StringRequest request = new StringRequest(requestMethod, requestDataURL,
+                new Response.Listener<String>() {
+                    @Override public void onResponse(String response) {
+                        if (uploading) {
+                            
+                        } else {
+                            User user = parseAPIResponse(response);
+
+                            // Save user to SharedPreferences
+                            ed.putString("name", user.getName());
+                            ed.apply();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override public void onErrorResponse(VolleyError error) {
+                        Log.d("dky", "Error");
+                    }
+                }) {
+            @Override protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("name", edName.toString());
+                // TO DO: upload image
+//                params.put("image", );
+
+                return params;
+            }
+        };
+        MyVolley.getInstance(this).add(request);
+    }
+
+    User parseAPIResponse(String response) {
+        Gson gson = new Gson();
+        Type typeToken = new TypeToken<APIResponse<User>>() {}.getType();
+        APIResponse<User> apiResponse = gson.fromJson(response, typeToken);
+
+        return apiResponse.getData();
     }
 }
