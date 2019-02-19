@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
@@ -27,8 +28,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnAbout;
     Button btnUnregister;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -78,9 +78,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-    @Override
-    protected void onResume() {
+    @Override protected void onResume() {
         super.onResume();
         SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
 
@@ -98,8 +96,10 @@ public class MainActivity extends AppCompatActivity {
         txtGreeting.setText(message);
     }
 
-    void sendRequest(String requestDataURL, int requestMethod) {
-        StringRequest request = new StringRequest(requestMethod, requestDataURL,
+    void volleyRequest(String requestDataURL, int requestMethod) {
+        StringRequest request = new StringRequest(
+                requestMethod,
+                requestDataURL,
                 new Response.Listener<String>() {
                     @Override public void onResponse(String response) {
 
@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 }) {
             @Override protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-
                 return params;
             }
         };

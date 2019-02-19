@@ -61,7 +61,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Change first text input values
             edName.setText("");
             edName.setHint("Type the verification code here");
-            lblName.setText(R.string.lbl_codeVerification + ":");
+            lblName.setText(R.string.lbl_codeVerification);
 
             // Hide second text input
             edEmail.setVisibility(View.INVISIBLE);
@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
             // Change first text input values
             edName.setText("");
             edName.setHint("Type your name here");
-            lblName.setText(R.string.lbl_name + ":");
+            lblName.setText(R.string.lbl_name);
 
             // Show second text input
             edEmail.setVisibility(View.VISIBLE);
@@ -86,49 +86,51 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     void sendRequest(String requestDataURL, int requestMethod) {
-        StringRequest request = new StringRequest(requestMethod, requestDataURL,
-            new Response.Listener<String>() {
-                @Override public void onResponse(String response) {
-                    if (toVerify) {
-                        /* REGISTRATION */
-                        // Get token
-                        String token = parseAPIResponse(response);
+        StringRequest request = new StringRequest(
+                requestMethod,
+                requestDataURL,
+                new Response.Listener<String>() {
+                    @Override public void onResponse(String response) {
+                        if (toVerify) {
+                            /* REGISTRATION */
+                            // Get token
+                            String token = parseAPIResponse(response);
 
-                        // Save token
-                        SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
-                        SharedPreferences.Editor ed = prefs.edit();
-                        ed.putString("token", token);
-                        ed.apply();
+                            // Save token
+                            SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
+                            SharedPreferences.Editor ed = prefs.edit();
+                            ed.putString("token", token);
+                            ed.apply();
 
-                        Log.d("dky", "Register successful - token: " + prefs.getString("token", "no token"));
+                            Log.d("dky", "Register successful - token: " + prefs.getString("token", "no token"));
 
-                        // Send to Home screen
-                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                        startActivity(intent);
+                            // Send to Home screen
+                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        }
+
+                        swapLayoutElements();
+                        toVerify = !toVerify;
                     }
+                },
+                new Response.ErrorListener() {
+                @Override public void onErrorResponse(VolleyError error) {
+                    Log.d("dky", "Error");
 
                     swapLayoutElements();
                     toVerify = !toVerify;
                 }
-            },
-            new Response.ErrorListener() {
-            @Override public void onErrorResponse(VolleyError error) {
-                Log.d("dky", "Error");
-
-                swapLayoutElements();
-                toVerify = !toVerify;
-            }
-            }) {
-                @Override protected Map<String, String> getParams() {
-                    Map<String, String> params = new HashMap<>();
-                    params.put("email", edEmail.getText().toString());
-                    if (toVerify) {
-                        params.put("verify", edName.getText().toString());
-                    }
-
-                    return params;
+                }) {
+            @Override protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("email", edEmail.getText().toString());
+                if (toVerify) {
+                    params.put("verify", edName.getText().toString());
                 }
-            };
+
+                return params;
+            }
+        };
         MyVolley.getInstance(this).add(request);
     }
 
