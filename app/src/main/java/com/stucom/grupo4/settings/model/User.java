@@ -1,6 +1,8 @@
 package com.stucom.grupo4.settings.model;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     private int id;
     private String name;
@@ -11,17 +13,8 @@ public class User {
     private int lastScore;
     private String[] scores;
 
-    public User(int id, String name, String image, String from, int totalScore, int lastLevel, int lastScore, String[] scores) {
-        this.id = id;
-        this.name = name;
-        this.image = image;
-        this.from = from;
-        this.totalScore = totalScore;
-        this.lastLevel = lastLevel;
-        this.lastScore = lastScore;
-        this.scores = scores;
-    }
-
+    public int getId() { return id; }
     public String getName() { return name; }
     public String getImage() { return image; }
+    public int getTotalScore() { return totalScore; }
 }

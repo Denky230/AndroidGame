@@ -80,9 +80,19 @@
         android:id="@+id/btnUnregister"
         android:layout_width="87dp"
         android:layout_height="42dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
-        android:text="LOGOUT"
+        android:layout_marginBottom="8dp"
+        android:text="@string/btn_logout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="87dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/btn_login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

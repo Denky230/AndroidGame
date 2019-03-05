@@ -9,7 +9,7 @@ import com.android.volley.toolbox.Volley;
 public class MyVolley {
 
     private static MyVolley instance;
-    private RequestQueue queue;
+    private final RequestQueue queue;
 
     private MyVolley(Context context) {
         queue = Volley.newRequestQueue(context);
@@ -23,7 +23,6 @@ public class MyVolley {
         return instance;
     }
 
-    // Helper per afegir a la cua
     public <T> void add(Request<T> request) {
         queue.add(request);
     }

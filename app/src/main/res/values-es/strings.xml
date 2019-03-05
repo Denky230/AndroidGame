@@ -1,4 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name"></string>
+    <string name="txt_greeting">Hola %1$s! :D</string>
+    <string name="txt_greeting_default">forastero</string>
+
+    <!-- RegisterActivity -->
+
+    <string name="txt_registerTitle">Registro</string>
+    <string name="lbl_name">Nombre:</string>
+    <string name="hint_name">Escriba su nombre aquí</string>
+    <string name="hint_email">Escriba su email aquí</string>
+    <string name="lbl_codeVerification">Código:</string>
+    <string name="hint_codeVerification">Escriba el código de verificación aquí</string>
+    <string name="btn_register">REGISTRAR</string>
+    <string name="btn_verify">VERIFICAR</string>
+
+    <!-- MainActivity -->
+
+    <string name="txt_playTitle">Jugar</string>
+    <string name="btn_play">Jugar</string>
+    <string name="btn_settings">Ajustes</string>
+    <string name="btn_about">Sobre nosotros</string>
+    <string name="txt_deleteAccountData">Quiere que los datos de su cuenta sean borrados?</string>
+
+    <!-- WormyActivity -->
+
+    <string name="new_game">Nueva Partida</string>
+    <string name="game_over">Derrota!</string>
+
+    <!-- RankingActivity -->
+
+    <string name="txt_score">Puntuación: %1$d</string>
+
+    <!-- AboutActivity -->
+
+    <string name="txt_sendMessage">ENVIAR</string>
+
+    <!-- SettingsActivity -->
+
+    <string name="txt_settingsTitle">Ajustes</string>
+
+    <!-- AboutActivity -->
+
+    <string name="txt_aboutTitle">Sobre nosotros</string>
+    <string name="txt_appMadeBy">Aplicación hecha por: %1$s</string>
+    <string name="txt_authorDescription">Descripción del autor… :D</string>
+
+    <!-- Others -->
+
+    <string name="yes">Sí</string>
 </resources>

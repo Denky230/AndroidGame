@@ -8,8 +8,8 @@ import com.stucom.grupo4.settings.R;
 
 public class AboutActivity extends AppCompatActivity {
 
-    final String AUTHOR_NAME = "Denky";
-    TextView txtAppMadeBy;
+    private final String AUTHOR_NAME = "Denky";
+    private TextView txtAppMadeBy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
