@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.PlayActivity" />
-        <activity android:name=".activities.WormyActivity" />
+        <activity android:name=".activities.WormyActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".activities.RankingActivity" />
         <activity android:name=".activities.UserDetailsActivity" />
         <activity android:name=".activities.SettingsActivity" />

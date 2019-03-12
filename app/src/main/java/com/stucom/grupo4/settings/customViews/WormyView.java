@@ -15,24 +15,33 @@ import com.stucom.grupo4.settings.R;
 public class WormyView extends View {
 
     public static final int SLOW_DOWN = 5;
-    public static int TILE_SIZE = 48;
 
+    public static int TILE_SIZE = 48;
     private int nCols, nRows, top, left, bottom, right;
     private int wormX, wormY, score = 0, numCoins = 0, slowdown;
 
     private boolean playing = false;
-    private char map[];
-    private Paint paint;
+    private char board[];
+    private Paint paint, txtBrush;
     private Bitmap tiles, wormLeft, wormRight, worm;
 
     public WormyView(Context context) { this(context, null, 0); }
     public WormyView(Context context, AttributeSet attrs) { this(context, attrs, 0); }
     public WormyView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        
+        // Init game brush
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.BLACK);
         paint.setStrokeWidth(3.0f);
+        // Init text brush
+        txtBrush = new Paint();
+        txtBrush.setStyle(Paint.Style.FILL);
+        txtBrush.setColor(Color.BLACK);
+        txtBrush.setTextSize(200);
+        
+        // Init game resources
         tiles = BitmapFactory.decodeResource(getResources(), R.drawable.tiles);
         wormLeft = BitmapFactory.decodeResource(getResources(), R.drawable.worm_left);
         wormRight = BitmapFactory.decodeResource(getResources(), R.drawable.worm_right);
@@ -49,7 +58,7 @@ public class WormyView extends View {
             if ((w < 320) || (h < 320)) TILE_SIZE = 16;
             nCols = w / TILE_SIZE;
             nRows = h / TILE_SIZE;
-            left = ( w - nCols * TILE_SIZE) / 2;
+            left = (w - nCols * TILE_SIZE) / 2;
             top = (h - nRows * TILE_SIZE) / 2;
             right = left + nCols * TILE_SIZE;
             bottom = top + nRows * TILE_SIZE;
@@ -63,53 +72,60 @@ public class WormyView extends View {
         score = 0;
         playing = true;
         resetMap(true);
+        if (listener != null) listener.gameStart(this);
     }
 
     public void resetMap(boolean full) {
         if ((nCols <= 0) || (nRows <= 0)) return;
+
+        board = new char[nCols * nRows];
+        // Set worm initial pos to center of board
         wormX = nCols / 2;
         wormY = nRows / 2;
-        int size = nCols * nRows;
-        map = new char[size];
-        // Empty the board
-        for (int i = 0; i < size; i++) map[i] = ' ';
+
+        // Empty board
+        for (int i = 0; i < board.length; i++) board[i] = ' ';
         // Border around
         for (int i = 0; i < nCols; i++) {
-            map[i] = 'X';
-            map[(nRows - 1) * nCols + i] = 'X';
+            board[i] = 'X';
+            board[i + (nRows - 1) * nCols] = 'X';
         }
         for (int i = 0; i < nRows; i++) {
-            map[i * nCols] = 'X';
-            map[(i + 1) * nCols - 1] = 'X';
+            board[i * nCols] = 'X';
+            board[(i + 1) * nCols - 1] = 'X';
         }
+
         if (full) {
             // Protect worm position
-            map[wormY * nCols + wormX] = 'W';
+            board[wormY * nCols + wormX] = 'W';
+
             // Random plants
             int placed = 0;
-            while (placed < size / 20) {
+            while (placed < board.length / 20) {
                 int i = (int) (Math.random() * nCols);
                 int j = (int) (Math.random() * nRows);
                 int idx = j * nCols + i;
-                if (map[idx] == ' ') {
-                    map[idx] = (char) ('P' + (int) (Math.random() * 4));
+                if (board[idx] == ' ') {
+                    board[idx] = (char) ('P' + (int) (Math.random() * 4));
                     placed++;
                 }
             }
+
             // Random coins
             placed = 0;
-            numCoins = size / 50;
+            numCoins = board.length / 50;
             while (placed < numCoins) {
                 int i = (int) (Math.random() * nCols);
                 int j = (int) (Math.random() * nRows);
                 int idx = j * nCols + i;
-                if (map[idx] == ' ') {
-                    map[idx] = (char) ('C' + (int) (Math.random() * 5));
+                if (board[idx] == ' ') {
+                    board[idx] = (char) ('C' + (int) (Math.random() * 5));
                     placed++;
                 }
             }
+
             // Remove worm lock
-            map[wormY * nCols + wormX] = ' ';
+            board[wormY * nCols + wormX] = ' ';
         }
         this.invalidate();
     }
@@ -144,20 +160,20 @@ public class WormyView extends View {
 
     @Override public void onDraw(Canvas canvas) {
         canvas.drawColor(Color.WHITE);
-        if (map == null) return;
+        if (board == null) return;
         int idx = 0, x, y = top;
         for (int i = 0; i < nRows; i++) {
             x = left;
             for (int j = 0; j < nCols; j++) {
                 int s = 3;
-                char m = map[idx];
+                char m = board[idx];
                 switch (m) {
                     case 'X': s = 28; break;
-                    case 'C': s = 16; map[idx] = 'D'; break;
-                    case 'D': s = 17; map[idx] = 'E'; break;
-                    case 'E': s = 18; map[idx] = 'F'; break;
-                    case 'F': s = 19; map[idx] = 'G'; break;
-                    case 'G': s = 23; map[idx] = 'C'; break;
+                    case 'C': s = 16; board[idx] = 'D'; break;
+                    case 'D': s = 17; board[idx] = 'E'; break;
+                    case 'E': s = 18; board[idx] = 'F'; break;
+                    case 'F': s = 19; board[idx] = 'G'; break;
+                    case 'G': s = 23; board[idx] = 'C'; break;
                     case 'P': s = 2; break;
                     case 'Q': s = 21; break;
                     case 'R': s = 25; break;
@@ -171,11 +187,18 @@ public class WormyView extends View {
         }
         drawWorm(canvas, left + wormX * TILE_SIZE, top + wormY * TILE_SIZE);
         canvas.drawRect(left, top, right, bottom, paint);
+        canvas.drawText(
+                String.valueOf(score),
+                left + wormX * TILE_SIZE,
+                top + wormY * TILE_SIZE,
+                txtBrush
+        );
     }
 
     private int counter = 0;
     public void update(float accelerationX, float accelerationY) {
         if (!playing) return;
+
         if (++counter == slowdown) {
             counter = 0;
             int newX = wormX, newY = wormY;
@@ -184,13 +207,13 @@ public class WormyView extends View {
             if (accelerationY < -2) newY--;
             if (accelerationY > +2) newY++;
             int idx = newY * nCols + newX;
-            if (map[idx] != 'X') {
+            if (board[idx] != 'X') {
                 wormX = newX;
                 wormY = newY;
-                if ((map[idx] >= 'C') && (map[idx] <= 'G')) {
+                if ((board[idx] >= 'C') && (board[idx] <= 'G')) {
                     // Coin collected!
                     score += 10;
-                    map[idx] = ' ';
+                    board[idx] = ' ';
                     numCoins--;
                     if (numCoins == 0) {
                         slowdown--;
@@ -199,7 +222,7 @@ public class WormyView extends View {
                     }
                     if (listener != null) listener.scoreUpdated(this, score);
                 }
-                else if ((map[idx] >= 'P') && (map[idx] <= 'S')) {
+                else if ((board[idx] >= 'P') && (board[idx] <= 'S')) {
                     // Plant touched!
                     playing = false;
                     if (listener != null) listener.gameLost(this);
@@ -210,8 +233,9 @@ public class WormyView extends View {
     }
 
     public interface WormyListener {
-        void scoreUpdated(View view, int score);
+        void gameStart(View view);
         void gameLost(View view);
+        void scoreUpdated(View view, int score);
     }
 
     private WormyListener listener;
