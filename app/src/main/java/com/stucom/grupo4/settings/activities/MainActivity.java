@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -158,11 +159,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences prefs = getSharedPreferences(getPackageName(), MODE_PRIVATE);
         final SharedPreferences.Editor ed = prefs.edit();
 
+        Log.d("dky", requestDataURL);
+
         StringRequest request = new StringRequest(
                 Request.Method.GET,
                 requestDataURL,
                 new Response.Listener<String>() {
                     @Override public void onResponse(String response) {
+                        Log.d("dky", response);
+
                         // Get User data from API
                         User user = parseAPIResponse(response);
                         String name = user.getName();

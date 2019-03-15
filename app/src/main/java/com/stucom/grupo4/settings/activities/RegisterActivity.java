@@ -53,10 +53,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
     }
-    @Override protected void onResume() {
-        super.onResume();
-        setRegisterLayout();
-    }
 
     private void setRegisterLayout() {
         // Change first text input values
@@ -70,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
         lblEmail.setVisibility(View.VISIBLE);
 
         // Change submit button text
-        btnRegister.setText(R.string.btn_verify);
+        btnRegister.setText(R.string.btn_register);
 
     }
     private void setVerifyingLayout() {
@@ -111,6 +107,9 @@ public class RegisterActivity extends AppCompatActivity {
                             // Send to Home screen
                             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(intent);
+
+                            // Swap layout
+                            setRegisterLayout();
 
                         } else {
                             // Save User input name to SharedPreferences

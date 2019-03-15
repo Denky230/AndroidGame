@@ -67,6 +67,10 @@ public class WormyActivity extends AppCompatActivity
         super.onResume();
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
+    @Override protected void onPause() {
+//        sensorManager.unregisterListener(this);
+        super.onPause();
+    }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
